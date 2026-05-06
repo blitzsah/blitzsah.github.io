@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harts Consulting | SCADA & Industrial Automation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --dark-teal:  #0F6E56;
+      --mid-teal:   #5DCAA5;
+      --light-mint: #E1F5EE;
+      --soft-mint:  #9FE1CB;
+      --off-white:  #F7FDFB;
+      --text-dark:  #0A1F1A;
+      --text-mid:   #2D5C4E;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--off-white);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 5%;
+      background: rgba(247, 253, 251, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(93, 202, 165, 0.2);
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    /* SVG hex logo mark */
+    .logo-hex { width: 40px; height: 40px; flex-shrink: 0; }
+
+    .nav-wordmark {
+      display: flex; flex-direction: column; line-height: 1;
+    }
+    .nav-wordmark .brand { font-size: 1.1rem; font-weight: 700; color: var(--dark-teal); letter-spacing: 0.04em; }
+    .nav-wordmark .sub   { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--mid-teal); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2px; }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--text-mid); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--dark-teal); }
+
+    .nav-cta {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.6rem 1.4rem; border-radius: 2px;
+      background: var(--dark-teal); color: #fff;
+      text-decoration: none; transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: #0a5441; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid; place-items: center;
+      padding: 6rem 5% 4rem;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(93,202,165,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(15,110,86,0.12) 0%, transparent 60%);
+    }
+
+    /* Circuit grid overlay */
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(93,202,165,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93,202,165,0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 860px; text-align: center;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--mid-teal);
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      margin-bottom: 1.8rem;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; display: block; width: 28px; height: 1px; background: var(--mid-teal);
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700; line-height: 1.08; letter-spacing: -0.02em;
+      color: var(--dark-teal);
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    h1 span { color: var(--mid-teal); }
+
+    .hero-sub {
+      margin-top: 1.6rem;
+      font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 300; line-height: 1.7;
+      color: var(--text-mid); max-width: 580px; margin-inline: auto;
+      opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+    }
+
+    .hero-actions {
+      margin-top: 2.8rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+    }
+
+    .btn-primary {
+      padding: 0.85rem 2.2rem; background: var(--dark-teal); color: #fff;
+      font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+      border-radius: 2px; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #0a5441; transform: translateY(-2px); }
+
+    .btn-secondary {
+      padding: 0.85rem 2.2rem; background: transparent;
+      border: 1.5px solid var(--mid-teal); color: var(--dark-teal);
+      font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+      border-radius: 2px; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-secondary:hover { background: var(--light-mint); transform: translateY(-2px); }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--soft-mint);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0; animation: fadeUp 0.7s 1s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 36px; background: linear-gradient(to bottom, var(--soft-mint), transparent);
+      animation: scrollDrop 1.8s 1.2s infinite;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 7rem 5%;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .about-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid-teal);
+      margin-bottom: 1rem;
+    }
+
+    .about-text h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700; line-height: 1.2;
+      color: var(--dark-teal); margin-bottom: 1.4rem;
+    }
+
+    .about-text p {
+      font-size: 1rem; line-height: 1.8; color: var(--text-mid);
+      margin-bottom: 1rem; font-weight: 300;
+    }
+
+    .about-visual {
+      position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+
+    .stat-card {
+      background: #fff; border: 1px solid rgba(93,202,165,0.25);
+      border-radius: 4px; padding: 1.8rem 1.4rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover { border-color: var(--mid-teal); transform: translateY(-3px); }
+    .stat-card:nth-child(2) { margin-top: 1.5rem; }
+    .stat-card:nth-child(4) { margin-top: -1.5rem; }
+
+    .stat-num {
+      font-size: 2rem; font-weight: 700; color: var(--dark-teal); line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-num span { color: var(--mid-teal); }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-mid);
+    }
+
+    /* ── SERVICES ── */
+    #services {
+      background: var(--dark-teal);
+      padding: 7rem 5%;
+      position: relative; overflow: hidden;
+    }
+
+    #services::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(93,202,165,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93,202,165,0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .services-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid-teal);
+      margin-bottom: 0.8rem; display: block;
+    }
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700;
+      color: var(--light-mint); line-height: 1.2;
+    }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
+    }
+
+    .service-card {
+      background: rgba(225,245,238,0.06); border: 1px solid rgba(93,202,165,0.2);
+      border-radius: 4px; padding: 2.2rem;
+      transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    }
+    .service-card:hover {
+      background: rgba(225,245,238,0.1); border-color: var(--mid-teal);
+      transform: translateY(-4px);
+    }
+
+    .service-icon {
+      width: 44px; height: 44px; margin-bottom: 1.4rem;
+      background: rgba(93,202,165,0.15); border-radius: 3px;
+      display: grid; place-items: center;
+    }
+    .service-icon svg { width: 22px; height: 22px; stroke: var(--mid-teal); fill: none; stroke-width: 1.8; }
+
+    .service-card h3 {
+      font-size: 1.05rem; font-weight: 600; color: var(--light-mint);
+      margin-bottom: 0.8rem; line-height: 1.3;
+    }
+    .service-card p {
+      font-size: 0.88rem; line-height: 1.75; color: rgba(225,245,238,0.7); font-weight: 300;
+    }
+
+    /* ── WHY ── */
+    #why {
+      padding: 7rem 5%;
+      max-width: 1100px; margin: 0 auto;
+    }
+
+    .why-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3.5rem;
+    }
+
+    .why-item {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      padding: 1.8rem; background: #fff;
+      border: 1px solid rgba(93,202,165,0.2); border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    .why-item:hover { border-color: var(--mid-teal); }
+
+    .why-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--mid-teal); flex-shrink: 0; margin-top: 6px;
+    }
+
+    .why-item h3 { font-size: 0.95rem; font-weight: 600; color: var(--dark-teal); margin-bottom: 0.4rem; }
+    .why-item p  { font-size: 0.85rem; line-height: 1.7; color: var(--text-mid); font-weight: 300; }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--light-mint);
+      padding: 7rem 5%;
+    }
+
+    .contact-inner {
+      max-width: 680px; margin: 0 auto; text-align: center;
+    }
+
+    #contact h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700;
+      color: var(--dark-teal); margin-bottom: 1rem;
+    }
+    #contact p {
+      font-size: 1rem; line-height: 1.7; color: var(--text-mid);
+      font-weight: 300; margin-bottom: 2.5rem;
+    }
+
+    .contact-card {
+      background: #fff; border: 1px solid rgba(93,202,165,0.3);
+      border-radius: 4px; padding: 2.5rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+
+    .contact-row {
+      display: flex; align-items: center; gap: 1rem;
+      text-align: left;
+    }
+    .contact-row svg { width: 18px; height: 18px; stroke: var(--mid-teal); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .contact-row a { color: var(--dark-teal); text-decoration: none; font-size: 0.95rem; font-weight: 400; }
+    .contact-row a:hover { color: var(--mid-teal); }
+    .contact-row span { font-size: 0.95rem; color: var(--text-mid); }
+
+    .contact-divider { height: 1px; background: rgba(93,202,165,0.2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text-dark); padding: 2.5rem 5%;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+
+    .footer-brand {
+      font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: rgba(225,245,238,0.4);
+    }
+    .footer-copy {
+      font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.1em;
+      color: rgba(225,245,238,0.3);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scrollDrop {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      #about { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { grid-template-columns: 1fr 1fr; }
+      .stat-card:nth-child(2), .stat-card:nth-child(4) { margin-top: 0; }
+      .why-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">
+      <!-- Hex logo mark in brand colours -->
+      <svg class="logo-hex" viewBox="0 0 100 115" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,2 98,28 98,87 50,113 2,87 2,28" fill="#0F6E56"/>
+        <!-- Circuit dots -->
+        <circle cx="30" cy="35" r="4" fill="#5DCAA5"/>
+        <circle cx="70" cy="35" r="4" fill="#5DCAA5"/>
+        <circle cx="30" cy="80" r="4" fill="#5DCAA5"/>
+        <circle cx="70" cy="80" r="4" fill="#5DCAA5"/>
+        <!-- H letterform -->
+        <rect x="32" y="38" width="7" height="39" rx="1" fill="#E1F5EE"/>
+        <rect x="61" y="38" width="7" height="39" rx="1" fill="#E1F5EE"/>
+        <rect x="32" y="54" width="36" height="7" rx="1" fill="#9FE1CB"/>
+      </svg>
+      <div class="nav-wordmark">
+        <span class="brand">Harts</span>
+        <span class="sub">Consulting</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Get in Touch</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">SCADA & Industrial Automation</div>
+      <h1>Industrial Systems<br/><span>Built to Perform.</span></h1>
+      <p class="hero-sub">
+        Harts Consulting delivers expert SCADA development and industrial automation consulting —
+        specialising in Ignition platform solutions for manufacturing, utilities, and process industries.
+      </p>
+      <div class="hero-actions">
+        <a href="#services" class="btn-primary">Our Services</a>
+        <a href="#contact" class="btn-secondary">Start a Project</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-text reveal">
+      <div class="about-label">About Harts Consulting</div>
+      <h2>Independent expertise, delivered with precision.</h2>
+      <p>
+        Harts Consulting is an independent SCADA and automation consultancy, providing contract-based
+        engineering services to clients across a range of industries.
+      </p>
+      <p>
+        We bring senior-level expertise directly to your project — without the overhead of a large firm.
+        Whether you need a full system build or targeted support on an existing platform,
+        we deliver practical, reliable solutions on time.
+      </p>
+    </div>
+    <div class="about-visual reveal">
+      <div class="stat-card">
+        <div class="stat-num">Ignition<span>™</span></div>
+        <div class="stat-label">Certified Platform Specialist</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num"><span>∞</span></div>
+        <div class="stat-label">Scalable SCADA Solutions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">OT<span>/</span>IT</div>
+        <div class="stat-label">Convergence Experience</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">Ltd<span>.</span></div>
+        <div class="stat-label">Registered UK Company</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="services-inner">
+      <div class="section-header reveal">
+        <span class="section-label">What We Do</span>
+        <h2>Services & Capabilities</h2>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Ignition SCADA Development</h3>
+          <p>Full-cycle development on the Inductive Automation Ignition platform — from architecture and tag design through to HMI screens, historian configuration, and deployment.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </div>
+          <h3>PLC & Automation Integration</h3>
+          <p>Connecting SCADA systems to PLCs, RTUs, and field devices across all major protocols — Modbus, OPC-UA, EtherNet/IP, and more.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Reporting & Data Historian</h3>
+          <p>Building robust data collection pipelines, Ignition Reporting module dashboards, and integration with SQL databases for operational analytics and compliance.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>System Audits & Upgrades</h3>
+          <p>Reviewing legacy SCADA systems, identifying risks and performance gaps, then planning and executing modernisation — including migrations to Ignition.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>Training & Knowledge Transfer</h3>
+          <p>Upskilling your internal teams on Ignition platform usage, best practices, and day-to-day system management — so you stay in control after delivery.</p>
+        </div>
+
+        <div class="service-card reveal">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <h3>Contract & Project Support</h3>
+          <p>Available for short or long-term contracts. Whether embedded with your team on-site or working remotely, Harts Consulting fits around your project needs.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="section-header reveal">
+      <span class="section-label">Why Harts</span>
+      <h2 style="color: var(--dark-teal);">What sets us apart</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <div class="why-dot"></div>
+        <div>
+          <h3>Senior-level expertise</h3>
+          <p>You work directly with the engineer delivering your project — no account managers, no juniors. Just experienced, focused technical delivery.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-dot"></div>
+        <div>
+          <h3>Ignition platform specialists</h3>
+          <p>Deep, hands-on knowledge of the Ignition SCADA platform — from Designer to Gateway configuration and everything in between.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-dot"></div>
+        <div>
+          <h3>Flexible engagement model</h3>
+          <p>Available for day-rate contracts, fixed-price projects, or ongoing retainer support. We adapt to how your business works.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-dot"></div>
+        <div>
+          <h3>UK-based, registered Ltd company</h3>
+          <p>Harts Consulting is a registered UK limited company, giving you the confidence of a professional, accountable business relationship.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="reveal">
+        <span class="section-label" style="display:block; margin-bottom:0.8rem;">Get in Touch</span>
+        <h2>Ready to discuss your project?</h2>
+        <p>Whether you have a specific brief or just want to explore options, get in touch and we'll respond promptly.</p>
+      </div>
+      <div class="contact-card reveal">
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:info@hartsconsulting.co.uk">info@hartsconsulting.co.uk</a>
+        </div>
+        <div class="contact-divider"></div>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>United Kingdom</span>
+        </div>
+        <div class="contact-divider"></div>
+        <div class="contact-row">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <a href="https://linkedin.com/company/hartsconsulting" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">Harts Consulting Ltd</span>
+    <span class="footer-copy">© 2025 Harts Consulting Ltd. All rights reserved.</span>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
